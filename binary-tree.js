@@ -94,22 +94,44 @@ class BinaryTreeNode {
     else {
       if(!this.left) {
         //no left side
-        if (this.val > num)
-            return Math.min(this.val, this.right.findNextLargest(num));
-        else
+        if (this.val > num){
+            const nextLargest = this.right.findNextLargest(num);
+            if(nextLargest) 
+              return Math.min(this.val, nextLargest);
+            else 
+              return this.val;
+        } else
             return this.right.findNextLargest(num);
       } else if(!this.right) {
         //no right side
-        if (this.val > num)
-          return Math.min(this.val, this.left.findNextLargest(num));
-        else
+        if (this.val > num) {
+          const nextLargest = this.left.findNextLargest(num);
+          if (nextLargest)
+            return Math.min(this.val, this.left.findNextLargest(num));
+          else
+            return this.val;
+        } else
           return this.left.findNextLargest(num);
       } else {
         //there are both left and right nodes
+        const left = this.left.findNextLargest(num)
+        const right = this.right.findNextLargest(num)
         if (this.val > num)
-          return Math.min(this.val, this.left.findNextLargest(num), this.right.findNextLargest(num));
+          if(left)
+            if(right)
+              return Math.min(this.val, left, right);
+            else
+              return Math.min(this.val, left);
+          else
+            return this.val;
         else
-          return Math.min(this.left.findNextLargest(num), this.right.findNextLargest(num));
+          if(left)
+            if(right)
+              return Math.min(left, right);
+            else
+              return left;
+          else
+            return null;
       }
     }
   }
@@ -150,7 +172,7 @@ class BinaryTree {
    * which is larger than lowerBound. Return null if no such value exists. */
 
   nextLarger(lowerBound) {
-   return this.root.findNextLargest(lowerBound);
+    return this.root.findNextLargest(lowerBound);
   }
 
   /** Further study!
@@ -178,7 +200,7 @@ class BinaryTree {
    * serialize(tree): serialize the BinaryTree object tree into a string. */
 
   static serialize() {
-    
+
   }
 
   /** Further study!
