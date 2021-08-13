@@ -11,28 +11,81 @@ class BinaryTreeNode {
     return !(this.left || this.right) 
   }
 
-  greatestPath() {
+  pathWithGreatestSum() {
     //base case #is the end of the road
     if (this.isLeaf()) return this.val;
     //normal case
     else {
+      let pathWithGreatestSum = 0;
       if (!this.left) {
         //left side is a dead end just return the greatest 
         //  path of the right side. plus this value
-        return this.right.greatestPath() + this.val;
+        pathWithGreatestSum = this.right.pathWithGreatestSum();
       } else if (!this.right) {
         //right side is a dead end just return the greatest 
         //  path of the left side. plus this value
-        return this.left.greatestPath() + this.val;
+        pathWithGreatestSum = this.left.pathWithGreatestSum();
       } else {
         //both paths exist, return the bigger of the two paths.
-        return Math.max(
-          this.left.greatestPath() + this.val,
-          this.right.greatestPath() + this.val
+        pathWithGreatestSum = Math.max(
+          this.left.pathWithGreatestSum(),
+          this.right.pathWithGreatestSum()
         );
+
+      }
+      if (pathWithGreatestSum > 0) {
+        return pathWithGreatestSum + this.val;
+      } else {
+        return this.val;
       }
     }
   }
+  // greatestPathToLeaf() {
+  //   //base case #is the end of the road
+  //   if (this.isLeaf()) return this.val;
+  //   //normal case
+  //   else {
+  //     if (!this.left) {
+  //       //left side is a dead end just return the greatest 
+  //       //  path of the right side. plus this value
+  //       return this.right.greatestPath() + this.val;
+  //     } else if (!this.right) {
+  //       //right side is a dead end just return the greatest 
+  //       //  path of the left side. plus this value
+  //       return this.left.greatestPath() + this.val;
+  //     } else {
+  //       //both paths exist, return the bigger of the two paths.
+  //       return Math.max(
+  //         this.left.greatestPath() + this.val,
+  //         this.right.greatestPath() + this.val
+  //       );
+  //     }
+  //   }
+  // }
+  //#Janky, to be worked on
+  // possiblePathsToLeavesSums() {
+  //   //base case 
+  //   if (this.isLeaf()) return [this.val];
+  //   //normal case
+  //   else {
+  //     if (!this.left) {
+  //       //left side is a dead end just return the greatest 
+  //       //  path of the right side. 
+  //       //  Plus this value
+  //       return [this.right.possiblePathsToLeavesSums().map( sum => sum + this.val)];
+  //     } else if (!this.right) {
+  //       //right side is a dead end just return the greatest 
+  //       //  path of the left side. plus this value
+  //       return this.left.possiblePathsToLeavesSums().map(sum => sum + this.val);
+  //     } else {
+  //       //both possible
+  //       return [
+  //         ...this.left.possiblePathsToLeavesSums().map(sum => sum + this.val),
+  //         ...this.right.possiblePathsToLeavesSums().map(sum => sum + this.val)
+  //       ];
+  //     }
+  //   }
+  // }
 
   shortestToLeaf() {
     //we're at a leaf, there is one node on this path
@@ -162,9 +215,11 @@ class BinaryTree {
    * The path doesn't need to start at the root, but you can't visit a node more than once. */
 
   maxSum() {
-    if(this.root)
-      return this.root.greatestPath();
-    else 
+    if(this.root){
+      const leftPath = this.root.left ? this.root.left.pathWithGreatestSum() : 0;
+      const rightPath = this.root.right ? this.root.right.pathWithGreatestSum() : 0;
+      return leftPath + rightPath + this.root.val;
+    } else 
       return 0;
   }
 
@@ -172,7 +227,10 @@ class BinaryTree {
    * which is larger than lowerBound. Return null if no such value exists. */
 
   nextLarger(lowerBound) {
-    return this.root.findNextLargest(lowerBound);
+    if(this.root)
+      return this.root.findNextLargest(lowerBound);
+    else
+      return null;
   }
 
   /** Further study!

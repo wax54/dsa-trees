@@ -14,6 +14,10 @@ beforeEach(function() {
   smallTree = new BinaryTree(smallRoot);
 
   // build large tree
+//       6
+//    5,   5,
+//       3,  1,
+//     2,  1,
   let node6 = new BinaryTreeNode(1);
   let node5 = new BinaryTreeNode(1);
   let node4 = new BinaryTreeNode(2);
