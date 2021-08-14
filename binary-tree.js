@@ -119,22 +119,39 @@ class BinaryTreeNode {
       }
     }
   }
+  findParent(node) {
+    if (this.left === node) return this;
+    else if (this.right === node) return this;
+    else if (this.isLeaf()) return null;
+    else {
+      if (!this.left) {
+        return this.right.findParent(node);
+      } else if (!this.right) {
+        return this.left.findParent(node);
+      } else {
+        const left = this.left.findParent(node);
+        const right = this.right.findParent(node);
+        if (right) return right;
+        else if (left) return left;
+        else return null;
+      }
+    }
+  }
 
   distanceToNode(node) {
     if (this === node) return 1;
     else if(this.isLeaf()) return null;
     else {
       if (!this.left) {
-        return this.right.distanceToNode() + 1;
+        return this.right.distanceToNode(node) + 1;
       } else if (!this.right) {
-        return this.left.distanceToNode() + 1;
+        return this.left.distanceToNode(node) + 1;
       } else {
-        const left = this.left.distanceToNode();
-        const right = this.right.distanceToNode();
+        const left = this.left.distanceToNode(node);
+        const right = this.right.distanceToNode(node);
         if (right) return right + 1;
         else if(left) return left + 1;
         else return null;
-
       }
     }
   }
@@ -241,13 +258,19 @@ class BinaryTree {
   areCousins(node1, node2) {
     const stackLevelOne = this.root.distanceToNode(node1);
     //don't have to search for the other one, the first one is not in here
+
     if (stackLevelOne === null) {
       return false;
     }
+
     const stackLevelTwo = this.root.distanceToNode(node2);
-    //if sL2^ is null, it won't be === to sL2
+    //if sL2^ is null, it won't be === to sL1
     if(stackLevelOne === stackLevelTwo) {
-      return true;
+      const parent = this.root.findParent(node1);
+      if(parent.left === node2 || parent.right === node2)
+        return false;
+      else
+        return true;
     //otherwise they are not cousins
     }else {
       return false;
