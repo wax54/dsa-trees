@@ -158,7 +158,6 @@ describe("serialize and deserialize", function() {
   it("reverses one another", function() {
     // Failure message:
     // the function 'deserialize' should perfectly reverse the function 'serialize'
-
     let serialized = BinaryTree.serialize(myTree);
     let result = BinaryTree.deserialize(serialized);
     expect(result).toEqual(myTree);

@@ -119,6 +119,7 @@ class BinaryTreeNode {
       }
     }
   }
+
   findParent(node) {
     if (this.left === node) return this;
     else if (this.right === node) return this;
@@ -205,6 +206,38 @@ class BinaryTreeNode {
       }
     }
   }
+
+  arrayify() {
+    const result = [];
+    result.push(this.left ? this.left.val : null);
+    result.push(this.right ? this.right.val : null);
+
+    if(this.left) {
+      result.push(...this.left.arrayify());
+    }
+    if(this.right) {
+      result.push(...this.right.arrayify());
+    }
+    return result;
+  }
+
+  constructFromArray(arr, idx=0) {
+    if (arr[idx]) {
+      this.left = new BinaryTreeNode(arr[idx]);
+    }
+    if (arr[idx + 1]) {
+      this.right = new BinaryTreeNode(arr[idx + 1]);
+    }
+
+    idx += 2;
+    if (this.left) {
+      idx = this.left.constructFromArray(arr, idx);
+    } 
+    if (this.right) {
+      idx = this.right.constructFromArray(arr, idx);
+    }
+    return idx;
+  }
 }
 
 class BinaryTree {
@@ -280,23 +313,91 @@ class BinaryTree {
   /** Further study!
    * serialize(tree): serialize the BinaryTree object tree into a string. */
 
-  static serialize() {
-
+  static serialize(tree) {
+    const result = tree.root.arrayify();
+    result.unshift(tree.root.val);
+    return JSON.stringify(result);
   }
 
   /** Further study!
    * deserialize(stringTree): deserialize stringTree into a BinaryTree object. */
 
-  static deserialize() {
-
+  static deserialize(stringTree) {
+    const arr = JSON.parse(stringTree);
+    const rootVal = arr.shift();
+    const rootNode = new BinaryTreeNode(rootVal);
+    rootNode.constructFromArray(arr);
+    return new BinaryTree(rootNode);
   }
 
   /** Further study!
    * lowestCommonAncestor(node1, node2): find the lowest common ancestor
-   * of two nodes in a binary tree. */
+   * of two nodes in a binary tree. 
+   * Huge Runtime
+   * */
 
   lowestCommonAncestor(node1, node2) {
-    
+    let currNode = this.root;
+
+    /** If I can't find one or more of my nodes */
+    if(currNode.distanceToNode(node1) === null || currNode.distanceToNode(node2) === null)
+      // return null
+      return null;
+
+    //otherwise...
+    let left;
+    let right;
+    do {
+      //both nodes on left?
+      left = (currNode.left.distanceToNode(node1) !== null &&
+        currNode.left.distanceToNode(node2) !== null);
+      //both nodes on right?
+      right = (currNode.right.distanceToNode(node1) !== null &&
+        currNode.right.distanceToNode(node2) !== null);
+      //if both on left..
+      if(left) {
+        //.. dive deeper into the left
+        currNode = currNode.left;
+      //if both on right..
+      } else if(right) {
+        //..dive deeper into right
+        currNode = currNode.right;
+      }
+      // other wise, we are at LCA
+    //Repear while both of my nodes can be found on the same side
+    } while (left || right);
+
+    return currNode;
+
+    // let temp1 = node1;
+    // let temp2 = node2;
+    // let dist1 = this.root.distanceToNode(temp1);
+    // let dist2 = this.root.distanceToNode(temp2);   
+
+    // if(dist1 === null || dist2 === null) return null;
+
+    // while (dist1 !== dist2) {
+
+    //   return null;
+    //   if(dist1 > dist2) {
+    //     temp1 = this.root.findParent(temp1);
+    //   } else {
+    //     temp2 = this.root.findParent(temp2);
+    //   }
+    //     dist1 = this.root.distanceToNode(temp1);
+    //     dist2 = this.root.distanceToNode(temp2);
+    // }
+
+    // console.log('hello');
+    // while (temp1 !== temp2); {
+
+    //   console.log('temp1: ', temp1, 'temp2: ', temp2);
+    //   return null;
+
+    //   temp1 = this.root.findParent(temp1);
+    //   temp2 = this.root.findParent(temp2);
+    // } 
+    // return temp1;
   }
 }
 
